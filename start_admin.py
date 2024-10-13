@@ -1,9 +1,21 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from sqladmin import Admin
 
-from app.database import async_engine
+from app.utils import insert_data_to_db
+from app.database import async_engine, create_tables, drop_tables
 from app.admin.views import PageAdmin, UserAdmin, BuffAdmin, StuffAdmin, EnemyAdmin, WayAdmin, HeroAdmin
-app = FastAPI()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await drop_tables()
+    await create_tables()
+    await insert_data_to_db()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 
 

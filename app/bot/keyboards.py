@@ -68,7 +68,7 @@ def inventory_keyboard(stuff_exists: bool=True):
 
 def stuffs_keyboard(stuffs: list[Stuff]):
     kb = InlineKeyboardBuilder()
-    for stuff in stuffs:
+    for stuff in filter(lambda s: s.is_active, stuffs):
         kb.button(text=stuff.name, callback_data=f"use_stuff_{stuff.id}")
     kb.button(text="Отмена", callback_data="action")
     kb.adjust(1)

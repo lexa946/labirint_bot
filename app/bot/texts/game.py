@@ -9,8 +9,16 @@ hero_info = """
 🎒 <b>Рюкзак</b>: {inventory}
 """
 
-
 stuff_info = """
 <b>{stuff_name}</b>: {stuff_description}| {is_active}
- 
+
 """
+
+dice_dict = {
+    1: "⚀",
+    2: "⚁",
+    3: "⚂",
+    4: "⚃",
+    5: "⚄",
+    6: "⚅"
+}

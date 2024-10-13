@@ -1,5 +1,4 @@
 from sqlalchemy import select, delete
-from sqlalchemy.orm import joinedload
 
 from app.bot.models.main import User, Page, Way, Stuff, Hero
 from app.bot.utils import create_hero
@@ -7,12 +6,11 @@ from app.dao.base import BaseDAO
 from app.database import async_session_maker
 
 
-
 class UserDAO(BaseDAO):
     model = User
 
     @classmethod
-    async def change_hero(cls, user:User):
+    async def change_hero(cls, user: User):
         async with async_session_maker() as session:
             if user.hero:
                 user.hero.stuffs.clear()
@@ -31,9 +29,9 @@ class UserDAO(BaseDAO):
                 select(User).where(User.telegram_id == user.telegram_id)
             )
 
+
 class PageDAO(BaseDAO):
     model = Page
-
 
 
 class WayDAO(BaseDAO):
@@ -47,10 +45,8 @@ class StuffDAO(BaseDAO):
 class HeroDAO(BaseDAO):
     model = Hero
 
-
-
     @classmethod
-    async def add_stuff(cls, hero: Hero, stuff:Stuff):
+    async def add_stuff(cls, hero: Hero, stuff: Stuff):
         """
            Добавляет предмет герою
         """
@@ -60,7 +56,7 @@ class HeroDAO(BaseDAO):
             await session.commit()
 
     @classmethod
-    async def remove_stuff(cls, hero: Hero, stuff:Stuff):
+    async def remove_stuff(cls, hero: Hero, stuff: Stuff):
         """
            Убирает предмет у героя
         """
@@ -84,7 +80,13 @@ class HeroDAO(BaseDAO):
             session.add(hero)
             await session.commit()
 
-
-
-
-
+    @classmethod
+    async def change_characteristic(cls, hero: Hero, characteristic_name: str, characteristic_count: int):
+        """
+            Изменение характеристики героя
+        """
+        async with async_session_maker() as session:
+            setattr(hero, characteristic_name,
+                    getattr(hero, characteristic_name) + characteristic_count)
+            session.add(hero)
+            await session.commit()

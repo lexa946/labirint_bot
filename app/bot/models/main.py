@@ -93,9 +93,9 @@ class Stuff(Base):
     is_active: Mapped[bool] = mapped_column(default=False)
 
     heroes: Mapped[list['Hero']] = relationship(back_populates="stuffs", secondary=HeroStuff.__table__)
+    pages: Mapped[list['Page']] = relationship(back_populates="add_stuff")
+    ways_used: Mapped[list['Way']] = relationship(back_populates="stuff_need")
 
-    def __str__(self):
-        return f"{self.__class__.__name__} {self.name}"
 
     def __repr__(self):
         return f"{self.__class__.__name__} {self.name}"
@@ -110,6 +110,8 @@ class Enemy(Base):
 
     pages: Mapped[list["Page"]] = relationship(back_populates="enemies", secondary=PageEnemy.__table__)
 
+    def __repr__(self):
+        return f"{self.__class__.__name__} {self.name}"
 
 class Page(Base):
     __tablename__ = 'pages'
@@ -118,7 +120,13 @@ class Page(Base):
 
     enemies: Mapped[list["Enemy"]] = relationship(back_populates="pages", secondary=PageEnemy.__table__)
 
-    game_over: Mapped[bool] = mapped_column(nullable=True)
+    game_over: Mapped[bool] = mapped_column(nullable=True, default=False)
+    luck_test: Mapped[bool] = mapped_column(nullable=True, default=False)
+
+
+    add_stuff_id:Mapped[int] = mapped_column(ForeignKey('stuffs.id'), nullable=True)
+    add_stuff: Mapped['Stuff'] = relationship(back_populates="pages")
+
 
     add_buff_id: Mapped[int] = mapped_column(ForeignKey('buffs.id'), nullable=True)
     add_buff: Mapped['Buff'] = relationship(back_populates="pages")
@@ -126,6 +134,12 @@ class Page(Base):
     ways: Mapped[list['Way']] = relationship(back_populates="page", lazy="joined")
 
     heroes: Mapped[list['Hero']] = relationship(back_populates="current_page")
+
+
+    change_characteristic_name: Mapped[str] = mapped_column(nullable=True)
+    change_characteristic_count: Mapped[str] = mapped_column(nullable=True)
+
+
 
     def __str__(self):
         if len(self.text) < 25:
@@ -140,8 +154,14 @@ class Way(Base):
     description: Mapped[str]
     next_page: Mapped[int]
 
+    stuff_need_id: Mapped[int] = mapped_column(ForeignKey('stuffs.id'), nullable=True)
+    stuff_need: Mapped['Stuff'] = relationship(back_populates="ways_used")
+
     page_id: Mapped[int] = mapped_column(ForeignKey('pages.id'), nullable=True)
-    page: Mapped[list['Page']] = relationship(back_populates="ways")
+    page: Mapped['Page'] = relationship(back_populates="ways")
+
+    luck_test: Mapped[bool] = mapped_column(nullable=True, default=False)
+
 
     def __str__(self):
         return f"{self.__class__.__name__} {self.description} {self.next_page}"

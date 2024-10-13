@@ -44,7 +44,7 @@ async def call_potion_add(callback: CallbackQuery) -> None:
     await HeroDAO.add_stuff(user.hero, potion_stuff)
 
     answer = get_hero_info(user.hero) + "\n"
-    answer += "Рекомендую вам ознакомится с [📜 прологом](/prologue) для большего погружения.\n\n Если ты готов, тогда вперед... 🏃"
+    answer += "Рекомендую вам ознакомится с 📜/prologue для большего погружения.\n\n Если ты готов, тогда вперед... 🏃"
 
     way = await WayDAO.find_one_or_none(next_page=1)
     await callback.message.edit_text(text=answer, reply_markup=ways_keyboard([way]))
