@@ -25,8 +25,28 @@
     "is_active": false
   },
   {
+    "name": "Сапфир",
+    "description": "\uD83D\uDC9C",
+    "is_active": false
+  },
+  {
     "name": "Ожерелье",
     "description": "Амулет прибаляющий силу \uD83D\uDCAA",
+    "is_active": false
+  },
+  {
+    "name": "Кольчуга карлика",
+    "description": "\uD83E\uDDE5 Искусно выкована из первоклассной бронзы",
+    "is_active": false
+  },
+  {
+    "name": "Крюк",
+    "description": "\uD83E\uDE9D",
+    "is_active": false
+  },
+  {
+    "name": "Латунный колокольчик",
+    "description": "Крохотный колокольчик \uD83D\uDD14",
     "is_active": false
   }
 

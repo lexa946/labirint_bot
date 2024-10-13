@@ -136,9 +136,8 @@ class Page(Base):
 
 
     dice: Mapped[bool] = mapped_column(default=False)
-    change_characteristic_name: Mapped[str] = mapped_column(nullable=True)
-    change_characteristic_count: Mapped[str] = mapped_column(nullable=True)
-
+    change_characteristic_name: Mapped[str] = mapped_column(nullable=True) # несколько характеристик надо писать через ; без пробела. Например "money_count;current_skill"
+    change_characteristic_count: Mapped[str] = mapped_column(nullable=True) # необходимо записывать в нотации кубика +1d1, -10d1, +1d6+1d6, -1d6+1d6-2d1. несколько записей разделяй ;
 
 
     def __str__(self):
