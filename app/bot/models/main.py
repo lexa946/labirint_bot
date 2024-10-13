@@ -121,7 +121,6 @@ class Page(Base):
     enemies: Mapped[list["Enemy"]] = relationship(back_populates="pages", secondary=PageEnemy.__table__)
 
     game_over: Mapped[bool] = mapped_column(nullable=True, default=False)
-    luck_test: Mapped[bool] = mapped_column(nullable=True, default=False)
 
 
     add_stuff_id:Mapped[int] = mapped_column(ForeignKey('stuffs.id'), nullable=True)
@@ -136,6 +135,7 @@ class Page(Base):
     heroes: Mapped[list['Hero']] = relationship(back_populates="current_page")
 
 
+    dice: Mapped[bool] = mapped_column(default=False)
     change_characteristic_name: Mapped[str] = mapped_column(nullable=True)
     change_characteristic_count: Mapped[str] = mapped_column(nullable=True)
 
@@ -160,7 +160,7 @@ class Way(Base):
     page_id: Mapped[int] = mapped_column(ForeignKey('pages.id'), nullable=True)
     page: Mapped['Page'] = relationship(back_populates="ways")
 
-    luck_test: Mapped[bool] = mapped_column(nullable=True, default=False)
+    characteristic_test: Mapped[str] = mapped_column(nullable=True)
 
 
     def __str__(self):

@@ -1,4 +1,5 @@
 import random
+import re
 
 from app.bot.models.main import Hero, Stuff
 from app.bot.texts.game import hero_info, stuff_info
@@ -45,3 +46,12 @@ def get_stuffs_info(stuffs: list[Stuff]) -> str:
                    .replace("{is_active}", "Активный" if stuff.is_active else "Пассивный")
                    )
     return info
+
+
+def dice_parser(dice:str) -> int:
+    matches = re.findall(r"[-+]\dd\d?", dice)
+    result = 0
+    for match in matches:
+        num_x, num_y = match.split("d")
+        result += int(num_x) * random.randint(1, int(num_y))
+    return result

@@ -23,6 +23,11 @@
     "name": "Изумруд",
     "description": "❇\uFE0F Огромный изумруд невиданной красоты ",
     "is_active": false
+  },
+  {
+    "name": "Ожерелье",
+    "description": "Амулет прибаляющий силу \uD83D\uDCAA",
+    "is_active": false
   }
 
 

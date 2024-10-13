@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery
 
 from app.bot.keyboards import ways_keyboard, actions_keyboard, inventory_keyboard, stuffs_keyboard
 from app.bot.models.main import Page
-from app.bot.utils import get_hero_info, get_stuffs_info
+from app.bot.utils import get_hero_info, get_stuffs_info, dice_parser
 from app.dao.main import PageDAO, UserDAO, StuffDAO, HeroDAO
 
 router = Router()
@@ -97,7 +97,7 @@ async def call_next_page(callback: CallbackQuery) -> None:
         for change_characteristic_name, change_characteristic_count in zip(
                 next_page.change_characteristic_name.split(";"), next_page.change_characteristic_count.split(";")):
             await HeroDAO.change_characteristic(
-                user.hero, change_characteristic_name, int(change_characteristic_count)
+                user.hero, change_characteristic_name, dice_parser(change_characteristic_count)
             )
 
     await callback.message.edit_text(next_page.text, reply_markup=ways_keyboard(next_page.ways))
