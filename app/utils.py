@@ -2,7 +2,7 @@ import json
 
 from sqlalchemy import select
 
-from app.bot.models.main import Stuff, Page, Way, Enemy
+from app.bot.models import Stuff, Page, Way, Enemy, Buff
 from app.database import async_session_maker
 
 
@@ -12,18 +12,23 @@ async def insert_data_to_db():
             return json.load(f)
 
 
-    mock_stuff = read_mock("stuff")
+    mock_stuff = read_mock("stuffs")
+    mock_buff = read_mock("buffs")
     mock_pages = read_mock("pages")
     mock_enemies = read_mock("enemies")
 
 
 
     async with async_session_maker() as session:
-        for stuff in mock_stuff:
-            session.add(Stuff(**stuff))
+        for buff in mock_stuff:
+            session.add(Stuff(**buff))
 
         for enemy in mock_enemies:
             session.add(Enemy(**enemy))
+
+        for buff in mock_buff:
+            session.add(Buff(**buff))
+
 
         for mock_page in mock_pages:
             page = Page()
@@ -47,17 +52,30 @@ async def insert_data_to_db():
 
             for mock_way in mock_page.get('ways', []):
                 way = Way()
-                way.description = mock_way['description']
-                way.next_page = mock_way['next_page']
+                try:
+                    way.description = mock_way['description']
+                    way.next_page = mock_way['next_page']
+                except KeyError as e:
+                    print(page.id)
+                    raise e
                 if mock_way.get('luck_test', False):
                     way.luck_test = True
 
 
                 if mock_way.get('stuff_need'):
-                    stuff = await session.scalar(
+                    buff = await session.scalar(
                         select(Stuff).where(Stuff.name==mock_way['stuff_need'])
                     )
-                    way.stuff_need = stuff
+                    way.stuff_need = buff
+
+                if mock_way.get('buff_need'):
+                    buff = await session.scalar(
+                        select(Buff).where(Buff.name==mock_way['buff_need'])
+                    )
+                    way.buff_need = buff
+
+
+
                 way.page_id = page.id
                 session.add(way)
 

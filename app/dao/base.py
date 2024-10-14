@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.database import async_session_maker, Base
@@ -61,7 +61,7 @@ class BaseDAO:
             except SQLAlchemyError as e:
                 await session.rollback()
                 raise e
-            return new_instance
+        return new_instance
 
 
     @classmethod
@@ -70,10 +70,11 @@ class BaseDAO:
            Редактируем модель
         """
         async with async_session_maker() as session:
-            for key, value in values.items():
-                setattr(instance, key, value)
-            session.add(instance)
-            await session.flush()
+            query = (update(cls.model)
+                     .filter_by(id=instance.id)
+                     .values(**values))
+            await session.execute(query)
+            # session.add(query)
             await session.commit()
         return instance
 

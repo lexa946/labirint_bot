@@ -5,7 +5,7 @@ from sqladmin import Admin
 
 from app.utils import insert_data_to_db
 from app.database import async_engine, create_tables, drop_tables
-from app.admin.views import PageAdmin, UserAdmin, BuffAdmin, StuffAdmin, EnemyAdmin, WayAdmin, HeroAdmin
+from app.admin.views import PageAdmin, UserAdmin, BuffAdmin, StuffAdmin, EnemyAdmin, WayAdmin, HeroAdmin, CombatAdmin
 
 
 @asynccontextmanager
@@ -29,3 +29,4 @@ admin.add_view(StuffAdmin)
 admin.add_view(EnemyAdmin)
 admin.add_view(WayAdmin)
 admin.add_view(HeroAdmin)
+admin.add_view(CombatAdmin)

@@ -1,8 +1,8 @@
 import random
 import re
 
-from app.bot.models.main import Hero, Stuff
-from app.bot.texts.game import hero_info, stuff_info
+from app.bot.models import Hero, Stuff
+from app.bot.texts.game import hero_info, stuff_info, dice_dict
 
 
 def create_hero() -> Hero:
@@ -48,10 +48,15 @@ def get_stuffs_info(stuffs: list[Stuff]) -> str:
     return info
 
 
-def dice_parser(dice:str) -> int:
+def dice_parser(dice:str) -> tuple[int, list[str]]:
     matches = re.findall(r"[-+]\dd\d?", dice)
     result = 0
+    dice_roll = []
     for match in matches:
         num_x, num_y = match.split("d")
-        result += int(num_x) * random.randint(1, int(num_y))
-    return result
+        rand_y = random.randint(1, int(num_y))
+        result += int(num_x) * rand_y
+        dice_roll.append(dice_dict[rand_y])
+
+    return result, dice_roll
+

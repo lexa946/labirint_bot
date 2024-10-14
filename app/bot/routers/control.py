@@ -3,10 +3,10 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 
 from app.dao.main import UserDAO
-from app.bot.keyboards import main_menu_keyboard, back_to_main_menu_keyboard, prolog_keyboard
-from app.bot.texts.tutorial import prolog
-from app.bot.utils import get_hero_info
 
+from app.bot.texts.tutorial import prolog
+from app.bot.utils.main import get_hero_info
+from app.keyboards.control import main_menu_keyboard, prolog_keyboard, back_to_main_menu_keyboard
 
 router = Router()
 

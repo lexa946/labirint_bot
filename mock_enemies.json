@@ -1,5 +1,10 @@
 [
   {
+    "name": "ГОБЛИН",
+    "skill": 6,
+    "stamina": 5
+  },
+  {
     "name": "ПЕРВЫЙ ГОБЛИН",
     "skill": 5,
     "stamina": 4
@@ -13,5 +18,16 @@
     "name": "МАНТИКОР",
     "skill": 11,
     "stamina": 11
+  },
+  {
+    "name": "ГИГАНТСКАЯ МУХА",
+    "skill": 7,
+    "stamina": 8
+  },
+  {
+    "name": "МИНОТАВР",
+    "skill": 9,
+    "stamina": 9
   }
+
 ]

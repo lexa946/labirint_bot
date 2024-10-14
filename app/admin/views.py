@@ -1,6 +1,6 @@
 from sqladmin import ModelView
 
-from app.bot.models.main import User, Page, Stuff, Buff, Enemy, Way, Hero
+from app.bot.models import User, Page, Stuff, Buff, Enemy, Way, Hero, Combat
 
 
 class UserAdmin(ModelView, model=User):
@@ -33,6 +33,9 @@ class EnemyAdmin(ModelView, model=Enemy):
 
 class WayAdmin(ModelView, model=Way):
     column_list = [c.name for c in Way.__table__.c]
+
+class CombatAdmin(ModelView, model=Combat):
+    column_list = [c.name for c in Combat.__table__.c]
 
 
 

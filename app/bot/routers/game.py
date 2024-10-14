@@ -1,10 +1,13 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
-from app.bot.keyboards import ways_keyboard, actions_keyboard, inventory_keyboard, stuffs_keyboard
-from app.bot.models.main import Page
-from app.bot.utils import get_hero_info, get_stuffs_info, dice_parser
+
+from app.bot.models import Page
+from app.bot.routers.combat import start_combat
+from app.bot.utils.main import get_hero_info, get_stuffs_info, dice_parser
+from app.bot.utils.game import check_game_over
 from app.dao.main import PageDAO, UserDAO, StuffDAO, HeroDAO
+from app.keyboards.game import actions_keyboard, stuffs_keyboard, inventory_keyboard, ways_keyboard
 
 router = Router()
 
@@ -75,14 +78,9 @@ async def call_use_stuff(callback: CallbackQuery) -> None:
 
 
 @router.callback_query(F.data.startswith("next_page_"))
+@check_game_over
 async def call_next_page(callback: CallbackQuery) -> None:
     user = await UserDAO.find_one_or_none(telegram_id=callback.from_user.id)
-
-    # Герой мертв, отправляем на новую игру
-    if user.hero.has_died:
-        await callback.message.edit_text("Твой герой погиб💀\nТебе придется начать новую игру!😔",
-                                         reply_markup=ways_keyboard([]))
-        return
 
     nex_page_id = int(callback.data.replace("next_page_", ""))
     next_page: Page = await PageDAO.find_one_or_none(id=nex_page_id)
@@ -91,13 +89,18 @@ async def call_next_page(callback: CallbackQuery) -> None:
     if next_page.game_over:
         await HeroDAO.path(user.hero, has_died=True)
 
-    await HeroDAO.path(user.hero, current_page=next_page)
+    await HeroDAO.path(user.hero, current_page_id=next_page.id)
 
     if next_page.change_characteristic_name:
         for change_characteristic_name, change_characteristic_count in zip(
                 next_page.change_characteristic_name.split(";"), next_page.change_characteristic_count.split(";")):
+            dice = dice_parser(change_characteristic_count)
             await HeroDAO.change_characteristic(
-                user.hero, change_characteristic_name, dice_parser(change_characteristic_count)
+                user.hero, change_characteristic_name, dice[0]
             )
 
-    await callback.message.edit_text(next_page.text, reply_markup=ways_keyboard(next_page.ways))
+    if next_page.enemies:
+        await start_combat(callback, user.hero, next_page)
+        return
+
+    await callback.message.edit_text(f"{next_page.id}. {next_page.text}", reply_markup=ways_keyboard(next_page.ways))

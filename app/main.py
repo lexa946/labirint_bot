@@ -3,14 +3,14 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from app.config import settings
-from app.bot.routers import control, game, tutorial
-
+from app.bot.routers import control, game, tutorial, combat
 
 bot = Bot(settings.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 dp.include_router(control.router)
 dp.include_router(tutorial.router)
 dp.include_router(game.router)
+dp.include_router(combat.router)
 
 
 async def bot_start():

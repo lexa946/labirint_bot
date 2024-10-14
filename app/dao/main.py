@@ -1,7 +1,7 @@
 from sqlalchemy import select, delete
 
-from app.bot.models.main import User, Page, Way, Stuff, Hero
-from app.bot.utils import create_hero
+from app.bot.models import User, Page, Way, Stuff, Hero, Combat, EnemyCombat
+from app.bot.utils.main import create_hero
 from app.dao.base import BaseDAO
 from app.database import async_session_maker
 
@@ -17,7 +17,6 @@ class UserDAO(BaseDAO):
                 user.hero.buffs.clear()
                 session.add(user.hero)
                 await session.flush()
-
                 await session.execute(
                     delete(Hero).where(Hero.id == user.hero.id)
                 )
@@ -36,6 +35,12 @@ class PageDAO(BaseDAO):
 
 class WayDAO(BaseDAO):
     model = Way
+
+class CombatDAO(BaseDAO):
+    model = Combat
+
+class EnemyCombatDAO(BaseDAO):
+    model = EnemyCombat
 
 
 class StuffDAO(BaseDAO):

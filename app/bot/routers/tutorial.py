@@ -3,9 +3,11 @@ from aiogram.types import CallbackQuery
 
 
 from app.dao.main import UserDAO, WayDAO, StuffDAO, HeroDAO
-from app.bot.keyboards import epigraph_keyboard, potion_choice_keyboard, ways_keyboard
+
 from app.bot.texts.tutorial import epigraph, potion_choice
-from app.bot.utils import get_hero_info
+from app.bot.utils.main import get_hero_info
+from app.keyboards.game import ways_keyboard
+from app.keyboards.tutorial import epigraph_keyboard, potion_choice_keyboard
 
 router = Router()
 
