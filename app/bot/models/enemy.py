@@ -46,8 +46,6 @@ class EnemyCombat(Base):
 
     @validates("current_stamina")
     def validate_stamina(self, key, value):
-        if self.max_stamina < value:
-            return self.max_stamina
-        elif value < 1:
+        if value < 1:
             return 0
         return value

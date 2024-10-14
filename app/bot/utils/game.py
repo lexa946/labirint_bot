@@ -21,6 +21,6 @@ def check_game_over(func):
             else:
                 await data.answer(text, reply_markup=reply_kb)
                 return
-        func(data)
+        await func(data)
 
     return wrapper

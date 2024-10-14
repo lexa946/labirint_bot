@@ -1,8 +1,7 @@
 from aiogram import Router, F
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
-
-from app.bot.models import Hero, Page, EnemyCombat
+from app.bot.models import Hero, Page, EnemyCombat, Way
 from app.bot.utils.main import dice_parser
 from app.bot.utils.game import check_game_over
 from app.dao.main import CombatDAO, UserDAO, EnemyCombatDAO, HeroDAO
@@ -20,6 +19,8 @@ async def call_luck(callback: CallbackQuery):
 @router.message(F.text.startswith("Атаковать"))
 @check_game_over
 async def message_attack(message: Message):
+
+
     user = await UserDAO.find_one_or_none(telegram_id=message.from_user.id)
     if not user.hero.combat:
         return
@@ -70,13 +71,16 @@ async def message_attack(message: Message):
     if target_enemy.current_stamina < 1:
         await EnemyCombatDAO.delete(target_enemy)
         enemies.remove(target_enemy)
-        await message.answer(f"{target_enemy.enemy_base.name} погиб ⚰️",
-                             reply_markup=attack_keyboard(enemies, can_leave=bool(user.combat))
-
-
-        # attack_keyboard(combat.enemies, can_leave=bool(leave_page_id)
-
-
+        if enemies:
+            await message.answer(f"{target_enemy.enemy_base.name} погиб ⚰️",
+                                 reply_markup=attack_keyboard(enemies, can_leave=bool(user.hero.combat.leave_page_id)))
+            return
+        else:
+            await message.reply(text="*<s>удаление клавитуры</s>*",reply_markup=ReplyKeyboardRemove())
+            await message.answer(f"💪 Ты одержал победу 🎉", reply_markup=ways_keyboard([
+                Way(description="Продолжить", next_page=user.hero.combat.win_page_id)
+            ]))
+            return
 
     punch_type_translate = {
         "attack":"Тебе удалось ранить врага -2❤️",
