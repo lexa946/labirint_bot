@@ -50,8 +50,23 @@
     "is_active": false
   },
   {
+    "name": "Кинжал",
+    "description": "Усеянный опалами кинжал \uD83D\uDDE1",
+    "is_active": false
+  },
+  {
     "name": "Деревянная трубка",
     "description": "Простая полая деревянная трубка ",
+    "is_active": false
+  },
+  {
+    "name": "Кольцо Желаний",
+    "description": "\uD83D\uDC8D",
+    "is_active": false
+  },
+  {
+    "name": "Бронзовый щит",
+    "description": "Искусно выкованный бронзовый щит \uD83D\uDEE1\uFE0F",
     "is_active": false
   },
   {

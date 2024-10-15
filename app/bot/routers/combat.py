@@ -1,10 +1,10 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
-from app.bot.models import Hero, Page, EnemyCombat, Way
+from app.bot.models import Hero, Page, EnemyCombat, Way, User
 from app.bot.utils.main import dice_parser
-from app.bot.utils.game import check_game_over
-from app.dao.main import CombatDAO, UserDAO, EnemyCombatDAO, HeroDAO
+from app.bot.utils.game import check_game_over, get_user
+from app.dao.main import CombatDAO, EnemyCombatDAO, HeroDAO
 from app.keyboards.combat import attack_keyboard, luck_keyboard
 from app.keyboards.game import ways_keyboard
 
@@ -12,16 +12,69 @@ router = Router()
 
 
 @router.callback_query(F.data.startswith("combat_luck_"))
-async def call_luck(callback: CallbackQuery):
-    await callback.message.edit_reply_markup(reply_markup=None)
+@get_user
+async def call_luck(callback: CallbackQuery, user:User):
+
+    punch_type, target_enemy_name = callback.data.replace("combat_luck_", "").split("_")
+
+    enemies = user.hero.combat.enemies
+    if not user.hero.combat:
+        await callback.message.edit_reply_markup(reply_markup=None)
+        return
+
+    target_enemy = None
+    for enemy in enemies:
+        if enemy.enemy_base.name == target_enemy_name:
+            target_enemy = enemy
+
+    luck_dice = dice_parser("+1d6+1d6")
+    if luck_dice[0] <= user.hero.current_luck:
+        luck = True
+        if punch_type == "defend":
+            await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina+1)
+            user.hero.current_stamina += 1
+            change_history_row = "Враг ранил тебя -1❤️"
+
+        else:
+            await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina - 2)
+            target_enemy.current_stamina -= 2
+            change_history_row = "Тебе удалось ранить врага -4❤️"
+    else:
+        luck = False
+        if punch_type == "defend":
+            await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina - 1)
+            user.hero.current_stamina -= 1
+            change_history_row = "Враг ранил тебя -3❤️"
+
+        else:
+            await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina + 1)
+            target_enemy.current_stamina += 1
+            change_history_row = "Тебе удалось ранить врага -1❤️"
+
+    new_current_luck = user.hero.current_luck - 1
+    await HeroDAO.path(user.hero, current_luck=new_current_luck)
+    user.hero.current_luck = new_current_luck
+
+
+
+    answer = callback.message.text.split("\n")
+    answer[0] = f"Характеристики: {user.hero.get_status()}"
+    answer[5] = change_history_row
+    answer.append("Удача на твоей стороне 🤗" if luck else "Удача отвернулась от тебя 😔")
+
+    enemy_power = answer[3].split(":")[1]
+    answer[3] = f"{target_enemy.enemy_base.name} {target_enemy.get_health_status()} : {enemy_power}"
+
+    answer = "\n".join(answer)
+
+    await callback.message.edit_text(answer, reply_markup=None)
+    await check_died(callback.message, user, target_enemy)
 
 
 @router.message(F.text.startswith("Атаковать"))
+@get_user
 @check_game_over
-async def message_attack(message: Message):
-
-
-    user = await UserDAO.find_one_or_none(telegram_id=message.from_user.id)
+async def message_attack(message: Message, user: User):
     if not user.hero.combat:
         return
 
@@ -37,8 +90,6 @@ async def message_attack(message: Message):
 
     target_enemy = None
     for enemy in enemies:
-        print(enemy)
-
         if enemy.enemy_base.name == target_enemy_name:
             target_enemy = enemy
 
@@ -63,24 +114,9 @@ async def message_attack(message: Message):
     else:
         punch_type = "pary"
 
-    if user.hero.current_stamina < 1:
-        await HeroDAO.path(user.hero, has_died=True)
-        await message.answer("Тебе не удалось победить этого врага.\nНа этом твое приключение окончено!", reply_markup=ways_keyboard([]))
-        return
 
-    if target_enemy.current_stamina < 1:
-        await EnemyCombatDAO.delete(target_enemy)
-        enemies.remove(target_enemy)
-        if enemies:
-            await message.answer(f"{target_enemy.enemy_base.name} погиб ⚰️",
-                                 reply_markup=attack_keyboard(enemies, can_leave=bool(user.hero.combat.leave_page_id)))
-            return
-        else:
-            await message.reply(text="*<s>удаление клавитуры</s>*",reply_markup=ReplyKeyboardRemove())
-            await message.answer(f"💪 Ты одержал победу 🎉", reply_markup=ways_keyboard([
-                Way(description="Продолжить", next_page=user.hero.combat.win_page_id)
-            ]))
-            return
+    died = await check_died(message, user, target_enemy)
+    if died: return
 
     punch_type_translate = {
         "attack":"Тебе удалось ранить врага -2❤️",
@@ -94,16 +130,40 @@ async def message_attack(message: Message):
     answer += f"{target_enemy.enemy_base.name} {target_enemy.get_health_status()} : {enemy_dice[1][0]} {enemy_dice[1][1]} - сила атаки {enemy_power}\n\n"
     answer += punch_type_translate[punch_type]
 
-    await message.answer(answer, reply_markup=luck_keyboard(punch_type))
+    if punch_type in ("attack", "defend"):
+        keyboard = luck_keyboard(f"{punch_type}_{target_enemy_name}")
+    else:
+        keyboard = None
+    await message.answer(answer, reply_markup=keyboard)
     return
 
 
+
+async def check_died(message: Message, user: User, target_enemy:EnemyCombat) -> bool:
+    enemies = user.hero.combat.enemies
+    if user.hero.current_stamina < 1:
+        await HeroDAO.path(user.hero, has_died=True)
+        await message.answer("Тебе не удалось победить этого врага.\nНа этом твое приключение окончено!", reply_markup=ways_keyboard([]))
+        return True
+
+    if target_enemy.current_stamina < 1:
+        await EnemyCombatDAO.delete(target_enemy)
+        enemies.remove(target_enemy)
+        if enemies:
+            await message.answer(f"{target_enemy.enemy_base.name} погиб ⚰️",
+                                 reply_markup=attack_keyboard(enemies, can_leave=bool(user.hero.combat.leave_page_id)))
+            return True
+        else:
+            await message.reply(text="*<s>удаление клавитуры</s>*",reply_markup=ReplyKeyboardRemove())
+            await message.answer(f"💪 Ты одержал победу 🎉", reply_markup=ways_keyboard([
+                Way(description="Продолжить", next_page=user.hero.combat.win_page_id)
+            ]))
+            return True
 
 
 
 async def start_combat(callback:CallbackQuery, hero:Hero, page:Page):
     if hero.combat:
-        print(f"{hero.combat.id=}")
         await CombatDAO.delete(hero.combat)
 
 
@@ -134,6 +194,3 @@ async def start_combat(callback:CallbackQuery, hero:Hero, page:Page):
         reply_markup=attack_keyboard(combat.enemies, can_leave=bool(leave_page_id))
     )
 
-
-async def combat():
-    ...

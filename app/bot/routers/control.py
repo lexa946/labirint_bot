@@ -2,6 +2,8 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 
+from app.bot.models import User
+from app.bot.utils.game import get_user
 from app.dao.main import UserDAO
 
 from app.bot.texts.tutorial import prolog
@@ -12,16 +14,8 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def cmd_stat(message: Message) -> None:
-    user = await UserDAO.find_one_or_none(telegram_id=message.from_user.id)
-
-    if not user:
-        await UserDAO.add(telegram_id=message.from_user.id,
-                          first_name=message.from_user.first_name,
-                          username=message.from_user.username,
-                          state=0,
-                          )
-
+@get_user
+async def cmd_stat(message: Message, user:User) -> None:
     await message.answer(text="👋 Добро пожаловать в игру 💀\"Лабиринт страха\"🦴", reply_markup=main_menu_keyboard())
 
 
@@ -55,16 +49,8 @@ async def call_main_menu(callback: CallbackQuery) -> None:
 
 
 @router.callback_query(F.data == "person")
-async def call_person(callback: CallbackQuery) -> None:
-    user = await UserDAO.find_one_or_none(telegram_id=callback.from_user.id)
-
-    if not user:
-        user = await UserDAO.add(telegram_id=callback.from_user.id,
-                                 first_name=callback.from_user.first_name,
-                                 username=callback.from_user.username,
-                                 state=0,
-                                 )
+@get_user
+async def call_person(callback: CallbackQuery, user: User) -> None:
     if not user.hero:
         user = await UserDAO.change_hero(user)
-
     await callback.message.edit_text(text=get_hero_info(user.hero), reply_markup=back_to_main_menu_keyboard())

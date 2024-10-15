@@ -39,32 +39,21 @@ class Hero(Base):
     def __repr__(self):
         return f"{self.__class__.__name__} {self.user.first_name} {self.user.username}"
 
-    @validates("provision_count")
+    @validates("provision_count", )
     def validate_provision_count(self, key, value):
         if value < 1:
             return 0
         return value
 
-    @validates("current_skill")
-    def validate_skill(self, key, value):
-        if self.max_skill < value:
-            return self.max_skill
-        elif value < 1:
-            return 0
-        return value
-
-    @validates("current_stamina")
-    def validate_stamina(self, key, value):
-        if self.max_stamina < value:
-            return self.max_stamina
-        elif value < 1:
-            return 0
-        return value
-
-    @validates("current_luck")
+    @validates("current_luck","current_skill", "current_stamina")
     def validate_luck(self, key, value):
-        if self.max_luck < value:
-            return self.max_luck
+        attrs_check = {
+            "current_luck": self.max_luck,
+            "current_skill": self.max_skill,
+            "current_stamina": self.max_stamina,
+        }
+        if attrs_check[key] < value:
+            return attrs_check[key]
         elif value < 1:
             return 0
         return value
