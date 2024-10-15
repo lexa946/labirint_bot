@@ -25,6 +25,11 @@
     "is_active": false
   },
   {
+    "name": "Жемчужина",
+    "description": "⚪",
+    "is_active": false
+  },
+  {
     "name": "Сапфир",
     "description": "\uD83D\uDC9C",
     "is_active": false
@@ -92,6 +97,16 @@
   {
     "name": "Костяная обезьянка",
     "description": "",
+    "is_active": false
+  },
+  {
+    "name": "Ходули",
+    "description": "Бамбуковые ходули",
+    "is_active": false
+  },
+  {
+    "name": "Зуб лепрекона",
+    "description": "Это зуб лепрекон - он приносит удачу \uD83C\uDF40",
     "is_active": false
   }
 
