@@ -28,6 +28,11 @@
     "name": "МИНОТАВР",
     "skill": 9,
     "stamina": 9
+  },
+  {
+    "name": "ПЛЮЩ",
+    "skill": 9,
+    "stamina": 9
   }
 
 ]

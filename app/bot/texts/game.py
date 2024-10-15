@@ -4,7 +4,7 @@ hero_info = """
 ❤️ <b>Выносливость</b>: {stamina}
 🍀 <b>Удачливость</b>: {luck}
 💰 <b>Золото</b>: {gold}
-🍗 <b>Привалы</b>: {provision}
+🍗 <b>Провизия</b>: {provision}
 ☠️ <b>Мерт</b>: {has_died}
 🎒 <b>Рюкзак</b>: {inventory}
 """

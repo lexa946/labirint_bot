@@ -78,9 +78,21 @@
     "name": "Веревка",
     "description": "Веревка из пещеры \uD80C\uDF6F",
     "is_active": false
+  },
+  {
+    "name": "Cеребряный кубок",
+    "description": "\uD83E\uDD5B",
+    "is_active": false
+  },
+  {
+    "name": "Раздвоитель",
+    "description": "\uD83E\uDDEA Только одна порция! Напиток сей позволит тебе принять форму любого живого существа, что близ тебя",
+    "is_active": false
+  },
+  {
+    "name": "Костяная обезьянка",
+    "description": "",
+    "is_active": false
   }
-
-
-
 
 ]
