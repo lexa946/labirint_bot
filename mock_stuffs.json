@@ -108,6 +108,11 @@
     "name": "Зуб лепрекона",
     "description": "Это зуб лепрекон - он приносит удачу \uD83C\uDF40",
     "is_active": false
+  },
+  {
+    "name": "Кость",
+    "description": "Старая засохшая кость \uD83E\uDDB4",
+    "is_active": false
   }
 
 ]
