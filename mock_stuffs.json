@@ -30,8 +30,28 @@
     "is_active": false
   },
   {
+    "name": "Рубиновый шар",
+    "description": "Шар, вырезанный из кроваво-красного рубина",
+    "is_active": false
+  },
+  {
     "name": "Сапфир",
     "description": "\uD83D\uDC9C",
+    "is_active": false
+  },
+  {
+    "name": "Топаз",
+    "description": "Топазы из глазниц черепа",
+    "is_active": false
+  },
+  {
+    "name": "Гранат",
+    "description": "Искрящейся красный самоцвет",
+    "is_active": false
+  },
+  {
+    "name": "Бриллиант",
+    "description": "\uD83D\uDC8E",
     "is_active": false
   },
   {
@@ -48,6 +68,10 @@
     "name": "Крюк",
     "description": "\uD83E\uDE9D",
     "is_active": false
+  },{
+    "name": "Кувшин кислоты",
+    "description": "Кувшин с концентрированной кислотой",
+    "is_active": false
   },
   {
     "name": "Латунный колокольчик",
@@ -56,7 +80,7 @@
   },
   {
     "name": "Кинжал",
-    "description": "Усеянный опалами кинжал \uD83D\uDDE1",
+    "description": "\uD83D\uDDE1",
     "is_active": false
   },
   {
@@ -66,7 +90,12 @@
   },
   {
     "name": "Кольцо Желаний",
-    "description": "\uD83D\uDC8D",
+    "description": "\uD83D\uDC8D Оно выполнит любое твое желание, но лишь одно!",
+    "is_active": false
+  },
+  {
+    "name": "Крылатый шлем",
+    "description": "Шлем изготовлен каким-то умельцем былых времен \uD83D\uDC77",
     "is_active": false
   },
   {
@@ -96,7 +125,7 @@
   },
   {
     "name": "Костяная обезьянка",
-    "description": "",
+    "description": "Амулет в виде костянной обезьянки",
     "is_active": false
   },
   {
@@ -112,6 +141,21 @@
   {
     "name": "Кость",
     "description": "Старая засохшая кость \uD83E\uDDB4",
+    "is_active": false
+  },
+  {
+    "name": "Зеркальце",
+    "description": "",
+    "is_active": false
+  },
+  {
+    "name": "Молоток",
+    "description": "",
+    "is_active": false
+  },
+  {
+    "name": "Медные шипы",
+    "description": "",
     "is_active": false
   }
 
