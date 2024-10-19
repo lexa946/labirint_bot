@@ -15,11 +15,6 @@
     "is_active": true
   },
   {
-    "name": "Медный ключ",
-    "description": "Простой медный ключ \uD83D\uDDDD\uFE0F. Интересно, от чего он?",
-    "is_active": false
-  },
-  {
     "name": "Изумруд",
     "description": "❇\uFE0F Огромный изумруд невиданной красоты ",
     "is_active": false
@@ -52,6 +47,11 @@
   {
     "name": "Бриллиант",
     "description": "\uD83D\uDC8E",
+    "is_active": false
+  },
+  {
+    "name": "Медный ключ",
+    "description": "Простой медный ключ \uD83D\uDDDD\uFE0F. Интересно, от чего он?",
     "is_active": false
   },
   {

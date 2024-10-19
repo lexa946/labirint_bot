@@ -85,6 +85,11 @@
     "stamina": 12
   },
   {
+    "name": "СКАЛОЕД",
+    "skill": 7,
+    "stamina": 11
+  },
+  {
     "name": "СКЕЛЕТ",
     "skill": 8,
     "stamina": 6
