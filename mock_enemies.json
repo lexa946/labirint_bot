@@ -60,6 +60,21 @@
     "stamina": 9
   },
   {
+    "name": "ПЕЩЕРНЫЙ ЧЕЛОВЕК",
+    "skill": 7,
+    "stamina": 7
+  },
+  {
+    "name": "ПЕЩЕРНЫЙ ТРОЛЛЬ",
+    "skill": 10,
+    "stamina": 11
+  },
+  {
+    "name": "КАРЛИК",
+    "skill": 8,
+    "stamina": 7
+  },
+  {
     "name": "ГЛУБИННЫЙ СТРАЖ",
     "skill": 12,
     "stamina": 15
@@ -68,5 +83,10 @@
     "name": "ТРОМ",
     "skill": 10,
     "stamina": 12
+  },
+  {
+    "name": "СКЕЛЕТ",
+    "skill": 8,
+    "stamina": 6
   }
 ]
