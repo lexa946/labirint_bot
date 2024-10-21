@@ -69,6 +69,8 @@ class BaseDAO:
         """
            Редактируем модель
         """
+        for key, value in values.items():
+            setattr(instance, key, value)
         async with async_session_maker() as session:
             query = (update(cls.model)
                      .filter_by(id=instance.id)

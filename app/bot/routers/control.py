@@ -7,7 +7,7 @@ from app.bot.utils.game import get_user
 from app.dao.main import UserDAO
 
 from app.bot.texts.tutorial import prolog
-from app.bot.utils.main import get_hero_info
+
 from app.keyboards.control import main_menu_keyboard, prolog_keyboard, back_to_main_menu_keyboard
 
 router = Router()
@@ -53,4 +53,4 @@ async def call_main_menu(callback: CallbackQuery) -> None:
 async def call_person(callback: CallbackQuery, user: User) -> None:
     if not user.hero:
         user = await UserDAO.change_hero(user)
-    await callback.message.edit_text(text=get_hero_info(user.hero), reply_markup=back_to_main_menu_keyboard())
+    await callback.message.edit_text(text=user.hero.get_full_info(), reply_markup=back_to_main_menu_keyboard())

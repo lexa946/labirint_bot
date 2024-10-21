@@ -1,8 +1,19 @@
-from sqlalchemy import ForeignKey
+import enum
+
+from sqlalchemy import ForeignKey, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from app.bot.models.secondary import HeroBuff, HeroStuff
 from app.database import Base
+
+
+class PotionEnum(enum.Enum):
+    skill = "Напиток Мудрых"
+    stamina = "Напиток Сильных"
+    luck = "Напиток Удачливых"
+
+    def __str__(self):
+        return self.value
 
 class Hero(Base):
     __tablename__ = 'heroes'
@@ -33,8 +44,29 @@ class Hero(Base):
     buffs: Mapped[list['Buff']] = relationship(back_populates="heroes", secondary=HeroBuff.__table__, lazy="joined")
     stuffs: Mapped[list['Stuff']] = relationship(back_populates="heroes", secondary=HeroStuff.__table__, lazy="joined")
 
+    potion: Mapped[PotionEnum] = mapped_column(Enum(PotionEnum), nullable=True)
+
     def get_status(self):
         return f"💪{self.current_skill}/{self.max_skill} ❤️{self.current_stamina}/{self.max_stamina} 🍀{self.current_luck}/{self.max_luck}"
+
+    def get_full_info(self):
+        return f"""
+        Твой персонаж:
+        💪 <b>Мастерство</b>: {self.current_skill}/{self.max_skill}
+        ❤️ <b>Выносливость</b>: {self.current_stamina}/{self.max_stamina}
+        🍀 <b>Удачливость</b>: {self.current_luck}/{self.max_luck}
+        💰 <b>Золото</b>: {self.money_count}
+        🍗 <b>Провизия</b>: {self.provision_count}
+        ☠️ <b>Мерт</b>: {"Да" if self.has_died else "Нет"}
+        🍷 <b>Напиток</b>: {self.potion or "Нет"}
+        """
+
+    def get_inventory(self):
+        result = "Инвентарь:\n"
+        for stuff in self.stuffs:
+            result += stuff.get_status() + "\n"
+        return result
+
 
     def __repr__(self):
         return f"{self.__class__.__name__} {self.user.first_name} {self.user.username}"
@@ -46,7 +78,7 @@ class Hero(Base):
         return value
 
     @validates("current_luck","current_skill", "current_stamina")
-    def validate_luck(self, key, value):
+    def validate_characteristics(self, key, value):
         attrs_check = {
             "current_luck": self.max_luck,
             "current_skill": self.max_skill,
@@ -57,3 +89,5 @@ class Hero(Base):
         elif value < 1:
             return 0
         return value
+
+

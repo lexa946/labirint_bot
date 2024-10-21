@@ -45,6 +45,8 @@ async def insert_data_to_db():
                     enemy = await session.scalar(
                         select(Enemy).where(Enemy.name==mock_enemy)
                     )
+                    if enemy is None:
+                        print(page.id)
                     page.enemies.append(enemy)
 
             session.add(page)

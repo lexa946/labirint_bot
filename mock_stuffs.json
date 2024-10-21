@@ -1,162 +1,118 @@
 [
   {
-    "name": "Напиток Мудрых",
-    "description": "Полностью восстанавливает ⚔\uFE0F мастерство.",
-    "is_active": true
-  },
-  {
-    "name": "Напиток Сильных",
-    "description": "Полностью восстанавливает ❤\uFE0F выносливость",
-    "is_active": true
-  },
-  {
-    "name": "Напиток Удачливых",
-    "description": "Полностью восстанавливает удачливость и повышает \uD83C\uDF40 максимум на 1",
-    "is_active": true
-  },
-  {
     "name": "Изумруд",
-    "description": "❇\uFE0F Огромный изумруд невиданной красоты ",
-    "is_active": false
+    "description": "❇\uFE0F Огромный изумруд невиданной красоты "
   },
   {
     "name": "Жемчужина",
-    "description": "⚪",
-    "is_active": false
+    "description": "⚪"
   },
   {
     "name": "Рубиновый шар",
-    "description": "Шар, вырезанный из кроваво-красного рубина",
-    "is_active": false
+    "description": "Шар, вырезанный из кроваво-красного рубина"
   },
   {
     "name": "Сапфир",
-    "description": "\uD83D\uDC9C",
-    "is_active": false
+    "description": "\uD83D\uDC9C"
   },
   {
     "name": "Топаз",
-    "description": "Топазы из глазниц черепа",
-    "is_active": false
+    "description": "Топазы из глазниц черепа"
   },
   {
     "name": "Гранат",
-    "description": "Искрящейся красный самоцвет",
-    "is_active": false
+    "description": "Искрящейся красный самоцвет"
   },
   {
     "name": "Бриллиант",
-    "description": "\uD83D\uDC8E",
-    "is_active": false
+    "description": "\uD83D\uDC8E"
   },
   {
     "name": "Медный ключ",
-    "description": "Простой медный ключ \uD83D\uDDDD\uFE0F. Интересно, от чего он?",
-    "is_active": false
+    "description": "Простой медный ключ \uD83D\uDDDD\uFE0F. Интересно, от чего он?"
   },
   {
     "name": "Ожерелье",
-    "description": "Амулет прибаляющий силу \uD83D\uDCAA",
-    "is_active": false
+    "description": "Амулет прибаляющий силу \uD83D\uDCAA"
   },
   {
     "name": "Кольчуга карлика",
-    "description": "\uD83E\uDDE5 Искусно выкована из первоклассной бронзы",
-    "is_active": false
+    "description": "\uD83E\uDDE5 Искусно выкована из первоклассной бронзы"
   },
   {
     "name": "Крюк",
-    "description": "\uD83E\uDE9D",
-    "is_active": false
-  },{
+    "description": "\uD83E\uDE9D"
+  },
+  {
     "name": "Кувшин кислоты",
-    "description": "Кувшин с концентрированной кислотой",
-    "is_active": false
+    "description": "Кувшин с концентрированной кислотой"
   },
   {
     "name": "Латунный колокольчик",
-    "description": "Крохотный колокольчик \uD83D\uDD14",
-    "is_active": false
+    "description": "Крохотный колокольчик \uD83D\uDD14"
   },
   {
     "name": "Кинжал",
-    "description": "\uD83D\uDDE1",
-    "is_active": false
+    "description": "\uD83D\uDDE1"
   },
   {
     "name": "Деревянная трубка",
-    "description": "Простая полая деревянная трубка ",
-    "is_active": false
+    "description": "Простая полая деревянная трубка "
   },
   {
     "name": "Кольцо Желаний",
-    "description": "\uD83D\uDC8D Оно выполнит любое твое желание, но лишь одно!",
-    "is_active": false
+    "description": "\uD83D\uDC8D Оно выполнит любое твое желание, но лишь одно!"
   },
   {
     "name": "Крылатый шлем",
-    "description": "Шлем изготовлен каким-то умельцем былых времен \uD83D\uDC77",
-    "is_active": false
+    "description": "Шлем изготовлен каким-то умельцем былых времен \uD83D\uDC77"
   },
   {
     "name": "Бронзовый щит",
-    "description": "Искусно выкованный бронзовый щит \uD83D\uDEE1\uFE0F",
-    "is_active": false
+    "description": "Искусно выкованный бронзовый щит \uD83D\uDEE1\uFE0F"
   },
   {
     "name": "Заметка про мантикора",
-    "description": "Заметка гласит «Путник, коль встретится тебе Мантикор, берегись хвоста его. Да убережет тебя твой верный щит от шипов, что наполнят воздух»",
-    "is_active": false
+    "description": "Заметка гласит «Путник, коль встретится тебе Мантикор, берегись хвоста его. Да убережет тебя твой верный щит от шипов, что наполнят воздух»"
   },
   {
     "name": "Веревка",
-    "description": "Веревка из пещеры \uD80C\uDF6F",
-    "is_active": false
+    "description": "Веревка из пещеры \uD80C\uDF6F"
   },
   {
     "name": "Cеребряный кубок",
-    "description": "\uD83E\uDD5B",
-    "is_active": false
+    "description": "\uD83E\uDD5B"
   },
   {
     "name": "Раздвоитель",
-    "description": "\uD83E\uDDEA Только одна порция! Напиток сей позволит тебе принять форму любого живого существа, что близ тебя",
-    "is_active": false
+    "description": "\uD83E\uDDEA Только одна порция! Напиток сей позволит тебе принять форму любого живого существа, что близ тебя"
   },
   {
     "name": "Костяная обезьянка",
-    "description": "Амулет в виде костянной обезьянки",
-    "is_active": false
+    "description": "Амулет в виде костянной обезьянки"
   },
   {
     "name": "Ходули",
-    "description": "Бамбуковые ходули",
-    "is_active": false
+    "description": "Бамбуковые ходули"
   },
   {
     "name": "Зуб лепрекона",
-    "description": "Это зуб лепрекон - он приносит удачу \uD83C\uDF40",
-    "is_active": false
+    "description": "Это зуб лепрекон - он приносит удачу \uD83C\uDF40"
   },
   {
     "name": "Кость",
-    "description": "Старая засохшая кость \uD83E\uDDB4",
-    "is_active": false
+    "description": "Старая засохшая кость \uD83E\uDDB4"
   },
   {
     "name": "Зеркальце",
-    "description": "",
-    "is_active": false
+    "description": ""
   },
   {
     "name": "Молоток",
-    "description": "",
-    "is_active": false
+    "description": ""
   },
   {
     "name": "Медные шипы",
-    "description": "",
-    "is_active": false
+    "description": ""
   }
-
 ]

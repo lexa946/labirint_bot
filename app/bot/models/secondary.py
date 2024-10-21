@@ -11,6 +11,19 @@ class PageEnemy(Base):
     page_id: Mapped[int] = mapped_column(ForeignKey('pages.id'), primary_key=True, index=True)
 
 
+class PageAddStuff(Base):
+    __tablename__ = 'page_add_stuff'
+
+    page_id: Mapped[int] = mapped_column(ForeignKey('pages.id'), primary_key=True, index=True)
+    stuff_id: Mapped[int] = mapped_column(ForeignKey('stuffs.id'), primary_key=True, index=True)
+
+class PageRemoveStuff(Base):
+    __tablename__ = 'page_remove_stuff'
+
+    page_id: Mapped[int] = mapped_column(ForeignKey('pages.id'), primary_key=True, index=True)
+    stuff_id: Mapped[int] = mapped_column(ForeignKey('stuffs.id'), primary_key=True, index=True)
+
+
 class HeroBuff(Base):
     __tablename__ = 'hero_buff'
     hero_id: Mapped[int] = mapped_column(ForeignKey('heroes.id'), primary_key=True, index=True)
@@ -21,4 +34,4 @@ class HeroStuff(Base):
     __tablename__ = 'hero_stuff'
 
     hero_id: Mapped[int] = mapped_column(ForeignKey('heroes.id'), primary_key=True, index=True)
-    buff_id: Mapped[int] = mapped_column(ForeignKey('stuffs.id'), primary_key=True, index=True)
+    stuff_id: Mapped[int] = mapped_column(ForeignKey('stuffs.id'), primary_key=True, index=True)

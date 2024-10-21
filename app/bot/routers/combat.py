@@ -1,20 +1,19 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
-from app.bot.models import Hero, Page, EnemyCombat, Way, User
-from app.bot.utils.main import dice_parser
+from app.bot.models import Hero, Page, EnemyCombat, User
 from app.bot.utils.game import check_game_over, get_user
+from app.bot.utils.main import dice_parser
 from app.dao.main import CombatDAO, EnemyCombatDAO, HeroDAO
 from app.keyboards.combat import attack_keyboard, luck_keyboard
-from app.keyboards.game import ways_keyboard
+from app.keyboards.game import ways_keyboard, combat_win_keyboard
 
 router = Router()
 
 
 @router.callback_query(F.data.startswith("combat_luck_"))
 @get_user
-async def call_luck(callback: CallbackQuery, user:User):
-
+async def call_luck(callback: CallbackQuery, user: User):
     punch_type, target_enemy_name = callback.data.replace("combat_luck_", "").split("_")
 
     enemies = user.hero.combat.enemies
@@ -31,19 +30,16 @@ async def call_luck(callback: CallbackQuery, user:User):
     if luck_dice[0] <= user.hero.current_luck:
         luck = True
         if punch_type == "defend":
-            await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina+1)
-            user.hero.current_stamina += 1
+            await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina + 1)
             change_history_row = "Враг ранил тебя -1❤️"
 
         else:
             await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina - 2)
-            target_enemy.current_stamina -= 2
             change_history_row = "Тебе удалось ранить врага -4❤️"
     else:
         luck = False
         if punch_type == "defend":
             await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina - 1)
-            user.hero.current_stamina -= 1
             change_history_row = "Враг ранил тебя -3❤️"
 
         else:
@@ -54,8 +50,6 @@ async def call_luck(callback: CallbackQuery, user:User):
     new_current_luck = user.hero.current_luck - 1
     await HeroDAO.path(user.hero, current_luck=new_current_luck)
     user.hero.current_luck = new_current_luck
-
-
 
     answer = callback.message.text.split("\n")
     answer[0] = f"Характеристики: {user.hero.get_status()}"
@@ -104,26 +98,22 @@ async def message_attack(message: Message, user: User):
     enemy_dice = dice_parser("+1d6+1d6")
     enemy_power = enemy_dice[0] + target_enemy.enemy_base.skill
     if hero_power > enemy_power:
-        await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina-2)
-        target_enemy.current_stamina -= 2
+        await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina - 2)
         punch_type = "attack"
     elif hero_power < enemy_power:
         await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina - 2)
-        user.hero.current_stamina -= 2
         punch_type = "defend"
     else:
         punch_type = "pary"
-
 
     died = await check_died(message, user, target_enemy)
     if died: return
 
     punch_type_translate = {
-        "attack":"Тебе удалось ранить врага -2❤️",
-        "defend":"Враг ранил тебя -2❤️",
+        "attack": "Тебе удалось ранить врага -2❤️",
+        "defend": "Враг ранил тебя -2❤️",
         "pary": "Вы отразили удары друг друга",
     }
-
 
     answer = f"Характеристики: {user.hero.get_status()}\n"
     answer += f"Твой бросок: {hero_dice[1][0]} {hero_dice[1][1]} - сила атаки {hero_power}\n\n"
@@ -138,12 +128,12 @@ async def message_attack(message: Message, user: User):
     return
 
 
-
-async def check_died(message: Message, user: User, target_enemy:EnemyCombat) -> bool:
+async def check_died(message: Message, user: User, target_enemy: EnemyCombat) -> bool:
     enemies = user.hero.combat.enemies
     if user.hero.current_stamina < 1:
         await HeroDAO.path(user.hero, has_died=True)
-        await message.answer("Тебе не удалось победить этого врага.\nНа этом твое приключение окончено!", reply_markup=ways_keyboard([]))
+        await message.answer("Тебе не удалось победить этого врага.\nНа этом твое приключение окончено!",
+                             reply_markup=ways_keyboard([]))
         return True
 
     if target_enemy.current_stamina < 1:
@@ -154,18 +144,15 @@ async def check_died(message: Message, user: User, target_enemy:EnemyCombat) -> 
                                  reply_markup=attack_keyboard(enemies, can_leave=bool(user.hero.combat.leave_page_id)))
             return True
         else:
-            await message.reply(text="*<s>удаление клавитуры</s>*",reply_markup=ReplyKeyboardRemove())
-            await message.answer(f"💪 Ты одержал победу 🎉", reply_markup=ways_keyboard([
-                Way(description="Продолжить", next_page=user.hero.combat.win_page_id)
-            ]))
+            await message.reply(text="*<s>удаление клавитуры</s>*", reply_markup=ReplyKeyboardRemove())
+            await message.answer(f"💪 Ты одержал победу 🎉",
+                                 reply_markup=combat_win_keyboard(user.hero.combat.win_page_id))
             return True
 
 
-
-async def start_combat(callback:CallbackQuery, hero:Hero, page:Page):
+async def start_combat(callback: CallbackQuery, hero: Hero, page: Page):
     if hero.combat:
         await CombatDAO.delete(hero.combat)
-
 
     win_page_id = None
     leave_page_id = None
@@ -183,7 +170,7 @@ async def start_combat(callback:CallbackQuery, hero:Hero, page:Page):
         enemies=[EnemyCombat(
             enemy_id=enemy.id,
             current_stamina=enemy.stamina,
-        )for enemy in page.enemies],
+        ) for enemy in page.enemies],
     )
 
     combat = await CombatDAO.find_one_or_none(id=combat.id)
@@ -193,4 +180,3 @@ async def start_combat(callback:CallbackQuery, hero:Hero, page:Page):
         text=f"💥 Бой начинается. Твои противники:\n\n{'\n'.join(str(enemy) for enemy in combat.enemies)}",
         reply_markup=attack_keyboard(combat.enemies, can_leave=bool(leave_page_id))
     )
-

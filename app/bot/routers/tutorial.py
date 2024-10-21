@@ -1,11 +1,12 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
-
-from app.dao.main import UserDAO, WayDAO, StuffDAO, HeroDAO
+from app.bot.models import User
+from app.bot.models.hero import PotionEnum
+from app.bot.utils.game import get_user
+from app.dao.main import UserDAO, WayDAO, HeroDAO
 
 from app.bot.texts.tutorial import epigraph, potion_choice
-from app.bot.utils.main import get_hero_info
 from app.keyboards.game import ways_keyboard
 from app.keyboards.tutorial import epigraph_keyboard, potion_choice_keyboard
 
@@ -25,27 +26,17 @@ async def call_potion_choice(callback: CallbackQuery) -> None:
 
 
 @router.callback_query(F.data.in_(("potion_skill", "potion_stamina", "potion_luck")))
-async def call_potion_add(callback: CallbackQuery) -> None:
-    potion_translate = {
-        "potion_skill": "Напиток Мудрых",
-        "potion_stamina": "Напиток Сильных",
-        "potion_luck": "Напиток Удачливых"
-    }
-    potion_stuff = await StuffDAO.find_one_or_none(name=potion_translate[callback.data])
-
-    user = await UserDAO.find_one_or_none(telegram_id=callback.from_user.id)
-    if not user:
-        user = await UserDAO.add(telegram_id=callback.from_user.id,
-                                 first_name=callback.from_user.first_name,
-                                 username=callback.from_user.username,
-                                 state=0,
-                                 )
-
+@get_user
+async def call_potion_add(callback: CallbackQuery, user: User) -> None:
     user = await UserDAO.change_hero(user)
 
-    await HeroDAO.add_stuff(user.hero, potion_stuff)
 
-    answer = get_hero_info(user.hero) + "\n"
+
+    await HeroDAO.path(user.hero, potion=getattr(PotionEnum, callback.data.replace("potion_", "")))
+
+
+
+    answer = user.hero.get_full_info() + "\n"
     answer += "Рекомендую вам ознакомится с 📜/prologue для большего погружения.\n\n Если ты готов, тогда вперед... 🏃"
 
     way = await WayDAO.find_one_or_none(next_page=1)

@@ -5,6 +5,16 @@
     "stamina": 5
   },
   {
+    "name": "ПЕРВЫЙ ОРК",
+    "skill": 5,
+    "stamina": 5
+  },
+  {
+    "name": "ВТОРОЙ ОРК",
+    "skill": 6,
+    "stamina": 4
+  },
+  {
     "name": "ПЕРВЫЙ ГОБЛИН",
     "skill": 5,
     "stamina": 4
