@@ -65,7 +65,7 @@ class BaseDAO:
 
 
     @classmethod
-    async def path(cls, instance: Base, **values) -> model:
+    async def patch(cls, instance: Base, **values) -> model:
         """
            Редактируем модель
         """
@@ -88,3 +88,4 @@ class BaseDAO:
         async with async_session_maker() as session:
             await session.delete(instance)
             await session.commit()
+

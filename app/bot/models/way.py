@@ -12,10 +12,10 @@ class Way(Base):
     next_page: Mapped[int]
 
     stuff_need_id: Mapped[int] = mapped_column(ForeignKey('stuffs.id'), nullable=True)
-    stuff_need: Mapped['Stuff'] = relationship(back_populates="ways_used")
+    stuff_need: Mapped['Stuff'] = relationship(back_populates="ways_used", lazy="joined")
 
     buff_need_id: Mapped[int] = mapped_column(ForeignKey('buffs.id'), nullable=True)
-    buff_need: Mapped['Buff'] = relationship(back_populates="ways_used")
+    buff_need: Mapped['Buff'] = relationship(back_populates="ways_used", lazy="joined")
 
 
 

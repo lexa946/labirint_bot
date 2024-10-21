@@ -1,4 +1,5 @@
 import enum
+from typing import Optional
 
 from sqlalchemy import ForeignKey, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
@@ -22,7 +23,7 @@ class Hero(Base):
     has_died: Mapped[bool] = mapped_column(default=False)
 
     current_page_id: Mapped[int] = mapped_column(ForeignKey('pages.id'))
-    current_page: Mapped['Page'] = relationship(back_populates='heroes')
+    current_page: Mapped['Page'] = relationship(back_populates='heroes', lazy="joined")
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.telegram_id'))
     user: Mapped['User'] = relationship(back_populates='hero', lazy="joined")
@@ -44,7 +45,7 @@ class Hero(Base):
     buffs: Mapped[list['Buff']] = relationship(back_populates="heroes", secondary=HeroBuff.__table__, lazy="joined")
     stuffs: Mapped[list['Stuff']] = relationship(back_populates="heroes", secondary=HeroStuff.__table__, lazy="joined")
 
-    potion: Mapped[PotionEnum] = mapped_column(Enum(PotionEnum), nullable=True)
+    potion: Mapped[Optional[PotionEnum]] = mapped_column(Enum(PotionEnum))
 
     def get_status(self):
         return f"💪{self.current_skill}/{self.max_skill} ❤️{self.current_stamina}/{self.max_stamina} 🍀{self.current_luck}/{self.max_luck}"

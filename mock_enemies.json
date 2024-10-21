@@ -70,6 +70,11 @@
     "stamina": 9
   },
   {
+    "name": "ИМИТАТОР",
+    "skill": 9,
+    "stamina": 2
+  },
+  {
     "name": "ПЕЩЕРНЫЙ ЧЕЛОВЕК",
     "skill": 7,
     "stamina": 7

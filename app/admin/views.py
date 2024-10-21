@@ -10,7 +10,7 @@ class HeroAdmin(ModelView, model=Hero):
     column_list = [c.name for c in Hero.__table__.c]
 
 class PageAdmin(ModelView, model=Page):
-    column_exclude_list = [Page.ways, Page.enemies, Page.add_buff_id, Page.heroes]
+    column_exclude_list = [Page.ways, Page.enemies, Page.heroes]
 
     column_formatters = {
         Page.text: lambda m, a: m.text[:50] + "...",

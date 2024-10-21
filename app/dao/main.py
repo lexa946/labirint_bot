@@ -1,6 +1,6 @@
 from sqlalchemy import select, delete
 
-from app.bot.models import User, Page, Way, Stuff, Hero, Combat, EnemyCombat
+from app.bot.models import User, Page, Way, Stuff, Hero, Combat, EnemyCombat, Buff
 from app.bot.utils.main import create_hero
 from app.dao.base import BaseDAO
 from app.database import async_session_maker
@@ -72,6 +72,19 @@ class HeroDAO(BaseDAO):
                     session.add(hero)
                     break
             await session.commit()
+
+    @classmethod
+    async def add_buff(cls, hero: Hero, buff: Buff):
+        """
+           Убирает предмет у героя
+        """
+        async with async_session_maker() as session:
+            hero.buffs.append(buff)
+            session.add(hero)
+            await session.commit()
+
+
+
 
     @classmethod
     async def use_provision(cls, hero: Hero):

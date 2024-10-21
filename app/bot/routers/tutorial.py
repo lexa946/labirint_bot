@@ -29,15 +29,10 @@ async def call_potion_choice(callback: CallbackQuery) -> None:
 @get_user
 async def call_potion_add(callback: CallbackQuery, user: User) -> None:
     user = await UserDAO.change_hero(user)
-
-
-
-    await HeroDAO.path(user.hero, potion=getattr(PotionEnum, callback.data.replace("potion_", "")))
-
-
+    await HeroDAO.patch(user.hero, potion=getattr(PotionEnum, callback.data.replace("potion_", "")))
 
     answer = user.hero.get_full_info() + "\n"
     answer += "Рекомендую вам ознакомится с 📜/prologue для большего погружения.\n\n Если ты готов, тогда вперед... 🏃"
 
     way = await WayDAO.find_one_or_none(next_page=1)
-    await callback.message.edit_text(text=answer, reply_markup=ways_keyboard([way]))
+    await callback.message.edit_text(text=answer, reply_markup=ways_keyboard([way], user.hero))

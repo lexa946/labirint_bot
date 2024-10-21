@@ -2,7 +2,7 @@ from functools import wraps
 
 from aiogram.types import CallbackQuery, Message
 
-from app.bot.models import User
+from app.bot.models import User, Hero
 from app.dao.main import UserDAO, HeroDAO
 from app.keyboards.game import ways_keyboard
 
@@ -24,7 +24,7 @@ def check_game_over(func):
     @wraps(func)
     async def wrapper(data: CallbackQuery | Message, user: User):
         text = "Твой герой погиб💀\nТебе придется начать новую игру!😔"
-        reply_kb = ways_keyboard([])
+        reply_kb = ways_keyboard([], user.hero)
         if user.hero.has_died:
             if isinstance(data, CallbackQuery):
                 await data.message.edit_text(text, reply_markup=reply_kb)
@@ -34,12 +34,13 @@ def check_game_over(func):
                 return
         await func(data, user)
         if not user.hero.current_stamina:
-            await HeroDAO.path(user.hero, has_died=True)
+            await HeroDAO.patch(user.hero, has_died=True)
 
             if isinstance(data, CallbackQuery):
                 await data.message.edit_reply_markup(reply_markup=None)
                 await data.message.answer(text, reply_markup=reply_kb)
 
     return wrapper
+
 
 

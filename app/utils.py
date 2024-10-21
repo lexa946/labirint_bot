@@ -20,8 +20,8 @@ async def insert_data_to_db():
 
 
     async with async_session_maker() as session:
-        for buff in mock_stuff:
-            session.add(Stuff(**buff))
+        for stuff in mock_stuff:
+            session.add(Stuff(**stuff))
 
         for enemy in mock_enemies:
             session.add(Enemy(**enemy))
@@ -40,14 +40,34 @@ async def insert_data_to_db():
                 page.change_characteristic_name = mock_page.get('change_characteristic_name')
                 page.change_characteristic_count = mock_page.get('change_characteristic_count')
 
-            if mock_page.get('enemies'):
-                for mock_enemy in mock_page.get('enemies'):
-                    enemy = await session.scalar(
-                        select(Enemy).where(Enemy.name==mock_enemy)
-                    )
-                    if enemy is None:
-                        print(page.id)
-                    page.enemies.append(enemy)
+
+            for mock_enemy in mock_page.get('enemies', []):
+                enemy = await session.scalar(
+                    select(Enemy).where(Enemy.name==mock_enemy)
+                )
+                if enemy is None:
+                    print(page.id)
+                page.enemies.append(enemy)
+
+            for add_stuff in mock_page.get('add_stuffs', []):
+                stuff = await session.scalar(
+                    select(Stuff).where(Stuff.name==add_stuff)
+                )
+                page.add_stuffs.append(stuff)
+
+            for remove_stuff in mock_page.get('remove_stuffs', []):
+                stuff = await session.scalar(
+                    select(Stuff).where(Stuff.name==remove_stuff)
+                )
+                page.remove_stuffs.append(stuff)
+
+            for add_buff in mock_page.get('add_buffs', []):
+                buff = await session.scalar(
+                    select(Buff).where(Buff.name==add_buff)
+                )
+                page.add_buffs.append(buff)
+
+
 
             session.add(page)
             await session.flush()
@@ -76,6 +96,9 @@ async def insert_data_to_db():
                     )
                     way.buff_need = buff
 
+
+                if mock_way.get("characteristic_test"):
+                    way.characteristic_test = mock_way['characteristic_test']
 
 
                 way.page_id = page.id

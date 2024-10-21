@@ -56,14 +56,14 @@ async def call_use_potion(callback: CallbackQuery, user: User) -> None:
         await callback.answer(f"Напиток был использован ранее!")
 
     if user.hero.potion == "Напиток Мудрых":
-        await HeroDAO.path(user.hero, current_skill=user.hero.max_skill)
+        await HeroDAO.patch(user.hero, current_skill=user.hero.max_skill)
     elif user.hero.potion == "Напиток Сильных":
-        await HeroDAO.path(user.hero, current_stamina=user.hero.max_stamina)
+        await HeroDAO.patch(user.hero, current_stamina=user.hero.max_stamina)
     elif user.hero.potion == "Напиток Удачливых":
-        await HeroDAO.path(user.hero, max_luck=user.hero.max_luck + 1, current_luck=user.hero.max_luck + 1)
+        await HeroDAO.patch(user.hero, max_luck=user.hero.max_luck + 1, current_luck=user.hero.max_luck + 1)
 
     await callback.answer(f"{user.hero.potion} - использован!")
-    await HeroDAO.path(user.hero, potion=None)
+    await HeroDAO.patch(user.hero, potion=None)
 
 
     await call_action(
@@ -79,9 +79,9 @@ async def call_next_page(callback: CallbackQuery, user: User) -> None:
     next_page: Page = await PageDAO.find_one_or_none(id=nex_page_id)
 
     if next_page.game_over:
-        await HeroDAO.path(user.hero, has_died=True)
+        await HeroDAO.patch(user.hero, has_died=True)
 
-    await HeroDAO.path(user.hero, current_page_id=next_page.id)
+    await HeroDAO.patch(user.hero, current_page_id=next_page.id)
 
     if next_page.change_characteristic_name:
         for change_characteristic_name, change_characteristic_count in zip(
@@ -89,9 +89,29 @@ async def call_next_page(callback: CallbackQuery, user: User) -> None:
             await HeroDAO.change_characteristic(
                 user.hero, change_characteristic_name, int(change_characteristic_count)
             )
+    for stuff in next_page.add_stuffs:
+        if stuff not in user.hero.stuffs:
+            await HeroDAO.add_stuff(user.hero, stuff)
+
+    for stuff in next_page.remove_stuffs:
+        if stuff in user.hero.stuffs:
+            await HeroDAO.remove_stuff(user.hero, stuff)
+
+    for buff in next_page.add_buffs:
+        if buff not in user.hero.buffs:
+            await HeroDAO.add_buff(user.hero, buff)
+
+    answer = f"{next_page.id}. {next_page.text}\n\n{user.hero.get_status()}"
+    reply_markup = ways_keyboard(next_page.ways, user.hero)
+
+    for way in next_page.ways:
+        if way.characteristic_test:
+            answer += "\n\nТебе необходимо бросить кубики /roll"
+            reply_markup = None
+            break
 
     if next_page.enemies:
         await start_combat(callback, user.hero, next_page)
         return
 
-    await callback.message.edit_text(f"{next_page.id}. {next_page.text}\n\n{user.hero.get_status()}", reply_markup=ways_keyboard(next_page.ways))
+    await callback.message.edit_text(answer, reply_markup=reply_markup)

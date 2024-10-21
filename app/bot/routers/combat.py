@@ -30,25 +30,25 @@ async def call_luck(callback: CallbackQuery, user: User):
     if luck_dice[0] <= user.hero.current_luck:
         luck = True
         if punch_type == "defend":
-            await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina + 1)
+            await HeroDAO.patch(user.hero, current_stamina=user.hero.current_stamina + 1)
             change_history_row = "Враг ранил тебя -1❤️"
 
         else:
-            await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina - 2)
+            await EnemyCombatDAO.patch(target_enemy, current_stamina=target_enemy.current_stamina - 2)
             change_history_row = "Тебе удалось ранить врага -4❤️"
     else:
         luck = False
         if punch_type == "defend":
-            await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina - 1)
+            await HeroDAO.patch(user.hero, current_stamina=user.hero.current_stamina - 1)
             change_history_row = "Враг ранил тебя -3❤️"
 
         else:
-            await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina + 1)
+            await EnemyCombatDAO.patch(target_enemy, current_stamina=target_enemy.current_stamina + 1)
             target_enemy.current_stamina += 1
             change_history_row = "Тебе удалось ранить врага -1❤️"
 
     new_current_luck = user.hero.current_luck - 1
-    await HeroDAO.path(user.hero, current_luck=new_current_luck)
+    await HeroDAO.patch(user.hero, current_luck=new_current_luck)
     user.hero.current_luck = new_current_luck
 
     answer = callback.message.text.split("\n")
@@ -98,10 +98,10 @@ async def message_attack(message: Message, user: User):
     enemy_dice = dice_parser("+1d6+1d6")
     enemy_power = enemy_dice[0] + target_enemy.enemy_base.skill
     if hero_power > enemy_power:
-        await EnemyCombatDAO.path(target_enemy, current_stamina=target_enemy.current_stamina - 2)
+        await EnemyCombatDAO.patch(target_enemy, current_stamina=target_enemy.current_stamina - 2)
         punch_type = "attack"
     elif hero_power < enemy_power:
-        await HeroDAO.path(user.hero, current_stamina=user.hero.current_stamina - 2)
+        await HeroDAO.patch(user.hero, current_stamina=user.hero.current_stamina - 2)
         punch_type = "defend"
     else:
         punch_type = "pary"
@@ -131,7 +131,7 @@ async def message_attack(message: Message, user: User):
 async def check_died(message: Message, user: User, target_enemy: EnemyCombat) -> bool:
     enemies = user.hero.combat.enemies
     if user.hero.current_stamina < 1:
-        await HeroDAO.path(user.hero, has_died=True)
+        await HeroDAO.patch(user.hero, has_died=True)
         await message.answer("Тебе не удалось победить этого врага.\nНа этом твое приключение окончено!",
                              reply_markup=ways_keyboard([]))
         return True
