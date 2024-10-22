@@ -4,3 +4,5 @@ services:
   bot:
     restart: always
     image: labirint-bot:latest
+    volumes:
+      - .env:.env:ro
