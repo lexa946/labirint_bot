@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.bot.models.secondary import HeroBuff, PageAddBuff
+from app.bot.models.secondary import HeroBuff, PageAddBuff, PageRemoveBuff
 from app.database import Base
 
 
@@ -11,6 +11,7 @@ class Buff(Base):
 
     heroes: Mapped[list['Hero']] = relationship(back_populates="buffs", secondary=HeroBuff.__table__)
     add_pages: Mapped[list['Page']] = relationship(back_populates="add_buffs", secondary=PageAddBuff.__table__)
+    remove_pages: Mapped[list['Page']] = relationship(back_populates="remove_buffs", secondary=PageRemoveBuff.__table__)
     ways_used: Mapped[list['Way']] = relationship(back_populates="buff_need")
 
     def __str__(self):

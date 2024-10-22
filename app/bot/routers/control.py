@@ -5,11 +5,13 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 
 from app.bot.models import User
+from app.bot.texts.help import help_text
+from app.bot.texts.rule import rules
 from app.bot.texts.tutorial import prolog
 from app.bot.utils.game import get_user
 from app.bot.utils.main import dice_parser
 from app.dao.main import UserDAO, HeroDAO
-from app.keyboards.control import main_menu_keyboard, prolog_keyboard, back_to_main_menu_keyboard
+from app.keyboards.control import main_menu_keyboard, close_long_message_keyboard, back_to_main_menu_keyboard
 from app.keyboards.game import ways_keyboard
 
 router = Router()
@@ -18,7 +20,14 @@ router = Router()
 @router.message(CommandStart())
 @get_user
 async def cmd_stat(message: Message, user: User) -> None:
-    await message.answer(text="👋 Добро пожаловать в игру 💀\"Лабиринт страха\"🦴", reply_markup=main_menu_keyboard())
+    await message.answer(
+        text="👋 Добро пожаловать в игру 💀\"Лабиринт страха\"🦴\n\nНастоятельно рекомендую ознакомится с правилами игры /rules 📜",
+        reply_markup=main_menu_keyboard())
+
+
+@router.message(Command("help"))
+async def cmd_stat(message: Message) -> None:
+    await message.answer(text=help_text)
 
 
 @router.message(Command('prologue'))
@@ -28,7 +37,17 @@ async def cmd_prologue(message: Message) -> None:
         response = await message.answer(text=paragraph)
         messages_id.append(response.message_id)
     messages_id.append(messages_id[-1] + 1)
-    await message.answer(text=prolog[-1], reply_markup=prolog_keyboard(messages_id))
+    await message.answer(text=prolog[-1], reply_markup=close_long_message_keyboard(messages_id))
+
+
+@router.message(Command('rules'))
+async def cmd_rules(message: Message) -> None:
+    messages_id = []
+    for rule in rules[:-1]:
+        response = await message.answer(text=rule)
+        messages_id.append(response.message_id)
+    messages_id.append(messages_id[-1] + 1)
+    await message.answer(text=rules[-1], reply_markup=close_long_message_keyboard(messages_id))
 
 
 @router.message(Command('roll'))
@@ -41,7 +60,8 @@ async def cmd_roll(message: Message, user: User) -> None:
     dice = dice_parser("+1d6+1d6")
     await send_message.edit_text(f"Твой результат {dice[0]} - {dice[1][0]} {dice[1][1]}")
 
-    if not user.hero.current_page.ways[0].characteristic_test and not user.hero.current_page.ways[1].characteristic_test:
+    if not user.hero.current_page.ways[0].characteristic_test and not user.hero.current_page.ways[
+        1].characteristic_test:
         return
 
     test_pass = False
@@ -69,9 +89,19 @@ async def cmd_roll(message: Message, user: User) -> None:
                              reply_markup=ways_keyboard([passed_way], user.hero))
 
 
-@router.callback_query(F.data.startswith("prolog_close_"))
-async def call_prolog_close(callback: CallbackQuery) -> None:
-    messages_id = [int(id_) for id_ in callback.data.replace("prolog_close_", "").split("_")]
+@router.message(Command('roll_one'))
+async def cmd_roll_one(message: Message) -> None:
+    send_message = await message.answer("Подготавливаем кубик 🎲")
+    await asyncio.sleep(0.7)
+    await send_message.edit_text("✊ Мешаем...")
+    await asyncio.sleep(0.7)
+    dice = dice_parser("+1d6")
+    await send_message.edit_text(f"Твой результат {dice[0]} - {dice[1][0]}")
+
+
+@router.callback_query(F.data.startswith("long_close_"))
+async def call_long_close(callback: CallbackQuery) -> None:
+    messages_id = [int(id_) for id_ in callback.data.replace("long_close_", "").split("_")]
     for message_id in messages_id:
         await callback.bot.delete_message(chat_id=callback.message.chat.id, message_id=message_id)
 

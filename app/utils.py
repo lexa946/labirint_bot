@@ -67,6 +67,12 @@ async def insert_data_to_db():
                 )
                 page.add_buffs.append(buff)
 
+            for remove_buff in mock_page.get('remove_buffs', []):
+                buff = await session.scalar(
+                    select(Buff).where(Buff.name==remove_buff)
+                )
+                page.remove_buffs.append(buff)
+
 
 
             session.add(page)

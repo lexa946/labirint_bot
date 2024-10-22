@@ -9,7 +9,16 @@ from alembic import context
 
 from app.config import settings
 from app.database import Base
-from app.bot.models.main import User, Hero, Buff, Enemy, Stuff, Page, Way
+from app.bot.models.buff import Buff
+from app.bot.models.combat import Combat
+from app.bot.models.enemy import Enemy, EnemyCombat
+from app.bot.models.hero import Hero
+from app.bot.models.page import Page
+from app.bot.models.stuff import Stuff
+from app.bot.models.user import User
+from app.bot.models.way import Way
+
+
 from app.bot.models.secondary import PageEnemy, HeroBuff, HeroStuff
 
 # this is the Alembic Config object, which provides

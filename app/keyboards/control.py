@@ -14,6 +14,6 @@ def back_to_main_menu_keyboard(kb:InlineKeyboardBuilder):
     kb.button(text="Главное меню", callback_data="main_menu")
 
 @create_inline_keyboard
-def prolog_keyboard(kb:InlineKeyboardBuilder, messages_id: list[int]):
-    call_back_data = "prolog_close_" + "_".join(str(id_) for id_ in messages_id)
-    kb.button(text="Закрыть пролог", callback_data=call_back_data)
+def close_long_message_keyboard(kb:InlineKeyboardBuilder, messages_id: list[int]):
+    call_back_data = "long_close_" + "_".join(str(id_) for id_ in messages_id)
+    kb.button(text="Закрыть", callback_data=call_back_data)

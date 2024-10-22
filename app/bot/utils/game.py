@@ -14,7 +14,6 @@ def get_user(func):
             user = await UserDAO.add(telegram_id=data.from_user.id,
                                      first_name=data.from_user.first_name,
                                      username=data.from_user.username,
-                                     state=0,
                                      )
         return await func(data, user)
     return wrapper

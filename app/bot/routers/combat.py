@@ -133,7 +133,7 @@ async def check_died(message: Message, user: User, target_enemy: EnemyCombat) ->
     if user.hero.current_stamina < 1:
         await HeroDAO.patch(user.hero, has_died=True)
         await message.answer("Тебе не удалось победить этого врага.\nНа этом твое приключение окончено!",
-                             reply_markup=ways_keyboard([]))
+                             reply_markup=ways_keyboard([], user.hero))
         return True
 
     if target_enemy.current_stamina < 1:

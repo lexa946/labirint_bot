@@ -36,8 +36,10 @@ class PageDAO(BaseDAO):
 class WayDAO(BaseDAO):
     model = Way
 
+
 class CombatDAO(BaseDAO):
     model = Combat
+
 
 class EnemyCombatDAO(BaseDAO):
     model = EnemyCombat
@@ -52,45 +54,38 @@ class HeroDAO(BaseDAO):
 
     @classmethod
     async def add_stuff(cls, hero: Hero, stuff: Stuff):
-        """
-           Добавляет предмет герою
-        """
         async with async_session_maker() as session:
+            print(hero.stuffs)
             hero.stuffs.append(stuff)
+            print(hero.stuffs)
             session.add(hero)
             await session.commit()
 
     @classmethod
     async def remove_stuff(cls, hero: Hero, stuff: Stuff):
-        """
-           Убирает предмет у героя
-        """
         async with async_session_maker() as session:
-            for hero_stuff in hero.stuffs:
-                if hero_stuff.id == stuff.id:
-                    hero.stuffs.remove(hero_stuff)
-                    session.add(hero)
-                    break
+            hero.stuffs.remove(stuff)
+            session.add(hero)
             await session.commit()
 
     @classmethod
     async def add_buff(cls, hero: Hero, buff: Buff):
-        """
-           Убирает предмет у героя
-        """
         async with async_session_maker() as session:
             hero.buffs.append(buff)
+            hero = await session.merge(hero)
             session.add(hero)
             await session.commit()
 
-
-
+    @classmethod
+    async def remove_buff(cls, hero: Hero, buff: Buff):
+        async with async_session_maker() as session:
+            hero.buffs.remove(buff)
+            hero = await session.merge(hero)
+            session.add(hero)
+            await session.commit()
 
     @classmethod
     async def use_provision(cls, hero: Hero):
-        """
-           Привал героя
-        """
         if hero.provision_count < 1: return
         async with async_session_maker() as session:
             hero.provision_count -= 1
@@ -100,9 +95,6 @@ class HeroDAO(BaseDAO):
 
     @classmethod
     async def change_characteristic(cls, hero: Hero, characteristic_name: str, characteristic_count: int):
-        """
-            Изменение характеристики героя
-        """
         async with async_session_maker() as session:
             setattr(hero, characteristic_name,
                     getattr(hero, characteristic_name) + characteristic_count)

@@ -1,9 +1,8 @@
 from typing import Optional
 
-from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.bot.models.secondary import PageEnemy, PageAddStuff, PageRemoveStuff, PageAddBuff
+from app.bot.models.secondary import PageEnemy, PageAddStuff, PageRemoveStuff, PageAddBuff, PageRemoveBuff
 from app.database import Base
 
 
@@ -16,6 +15,7 @@ class Page(Base):
     add_stuffs: Mapped[list['Stuff']] = relationship(back_populates="add_pages", secondary=PageAddStuff.__table__, lazy="joined")
     remove_stuffs: Mapped[list['Stuff']] = relationship(back_populates="remove_pages", secondary=PageRemoveStuff.__table__, lazy="joined")
     add_buffs: Mapped[list['Buff']] = relationship(back_populates="add_pages", secondary=PageAddBuff.__table__, lazy="joined")
+    remove_buffs: Mapped[list['Buff']] = relationship(back_populates="remove_pages", secondary=PageRemoveBuff.__table__, lazy="joined")
 
     game_over: Mapped[bool] = mapped_column(nullable=True, default=False)
 
@@ -24,8 +24,6 @@ class Page(Base):
 
     combats_win_page: Mapped[list['Combat']] = relationship(backref="win_page", foreign_keys="Combat.win_page_id", lazy="joined")
     combats_leave_page: Mapped[list['Combat']] = relationship(backref="leave_page", foreign_keys="Combat.leave_page_id", lazy="joined")
-
-    dice: Mapped[bool] = mapped_column(default=False)
 
 
     change_characteristic_name: Mapped[Optional[str]]

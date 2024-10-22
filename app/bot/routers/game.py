@@ -9,7 +9,6 @@ from app.keyboards.game import actions_keyboard, inventory_keyboard, ways_keyboa
 
 router = Router()
 
-
 @router.callback_query(F.data == "continue_game")
 @get_user
 async def call_continue_game(callback: CallbackQuery, user: User) -> None:
@@ -100,6 +99,11 @@ async def call_next_page(callback: CallbackQuery, user: User) -> None:
     for buff in next_page.add_buffs:
         if buff not in user.hero.buffs:
             await HeroDAO.add_buff(user.hero, buff)
+
+    for buff in next_page.remove_buffs:
+        if buff in user.hero.buffs:
+            await HeroDAO.remove_buff(user.hero, buff)
+
 
     answer = f"{next_page.id}. {next_page.text}\n\n{user.hero.get_status()}"
     reply_markup = ways_keyboard(next_page.ways, user.hero)
